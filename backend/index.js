@@ -7,7 +7,9 @@ import cookieParser from "cookie-parser";
 
 import connectDB from "./src/config/database/mongoDB.js";
 
-import authRoutes from "./src/routes/authRouter.js";
+import authRoutes from "./src/routes/authRoutes.js";
+import userRoutes from "./src/routes/userRoutes.js";
+import projectRoutes from "./src/routes/projectRoutes.js";
 
 dotenv.config();
 
@@ -22,6 +24,8 @@ app.use(express.json({ limit: "50mb" }));
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/project", projectRoutes);
 
 // if (process.env.NODE_ENV === "production") {
 // 	app.use(express.static(path.join(__dirname, "/frontend/dist")));
