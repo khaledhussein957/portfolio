@@ -8,6 +8,7 @@ import connectDB from "./src/config/database/mongoDB.js";
 import authRoutes from "./src/routes/authRoutes.js";
 import userRoutes from "./src/routes/userRoutes.js";
 import projectRoutes from "./src/routes/projectRoutes.js";
+import skillRoutes from "./src/routes/skillRoutes.js";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/project", projectRoutes);
+app.use("/api/skill", skillRoutes);
 
 
 app.listen(PORT, () => {
