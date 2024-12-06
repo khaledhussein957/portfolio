@@ -6,13 +6,13 @@ import {
     updateSkill,
     deleteSkill
 } from '../controller/skillController.js';
-
+import jwtAuth from '../middleware/auth.js';
 
 const router = express.Router();
 
-router.get('/', getSkills);
-router.post('/', addSkill);
-router.put('/:id', updateSkill);
-router.delete('/:id', deleteSkill);
+router.get('/', jwtAuth , getSkills);
+router.post('/', jwtAuth , addSkill);
+router.put('/:id', jwtAuth , updateSkill);
+router.delete('/:id', jwtAuth , deleteSkill);
 
 export default router;
