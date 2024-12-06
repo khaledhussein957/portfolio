@@ -41,26 +41,28 @@ export const signup = async (req, res) => {
 
 		console.log(`User ${user.name} created successfully`);
 
-		// generate verification token and set to the cookie
-		res.cookie("token", user._id, {
+		await sendVerificationEmail(user.email, verificationToken);
+
+		console.log(`Verification email sent to ${user.email}`);
+
+		// generate token
+		console.log(`user._id: ${user._id}`);
+
+		const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET,{
+			expiresIn: "7d",
+		});
+		console.log(`token in signup: ${token}`);
+
+		res.cookie("token", token, {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
 			sameSite: "strict",
 			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 		});
 
-
-		await sendVerificationEmail(user.email, verificationToken);
-
-		console.log(`Verification email sent to ${user.email}`);
-
 		res.status(201).json({
 			success: true,
 			message: "User created successfully",
-			user: {
-				...user._doc,
-				password: undefined,
-			},
 		});
 
 		console.log(`User ${user.name} created successfully`);
@@ -116,7 +118,13 @@ export const login = async (req, res) => {
 			return res.status(400).json({ success: false, message: "Invalid credentials" });
 		}
 
-		res.cookie("token", user._id, {
+		// generate token
+		const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+			expiresIn: "7d",
+		});
+		console.log(`token in login: ${token}`);
+
+		res.cookie("toke", token, {
 
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
@@ -131,10 +139,6 @@ export const login = async (req, res) => {
 		res.status(200).json({
 			success: true,
 			message: "Logged in successfully",
-			user: {
-				...user._doc,
-				password: undefined,
-			},
 		});
 
 		console.log(`User ${user.name} logged in successfully`);
