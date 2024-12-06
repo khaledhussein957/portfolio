@@ -1,26 +1,39 @@
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken'
+import dotenv from "dotenv";
 
-export const verifyToken = (req, res, next) => {
+dotenv.config();
 
-	const token = req.cookies.token;
+const jwtAuth = (req, res, next) => {
 
-	if (!token) return res.status(401).json({ success: false, message: "Unauthorized - no token provided" });
-	
+    // 1. Read the token from the cookie
+    const token = req.cookies.token;
+    console.log(`token: ${token}`);
+
     try {
 
-		const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        // 2. if no token, return the error
+        if (!token) {
+            return res.status(401).send(" missed token from cookies Unauthorized");
+        }
 
-		if (!decoded) return res.status(401).json({ success: false, message: "Unauthorized - invalid token" });
+        // 3. check if token is valid
+        const decode = jwt.verify(token, process.env.JWT_SECRET);
 
-		req.userId = decoded.userId;
+        if (!decode) {
+            return res.status(401).send("Error happen Unauthorized");
+        }
+        console.log(`decode: ${decode}`);
 
-		next();
+        req.userId = decode.userId;
+        console.log(`req.userId: ${req.userId}`);
 
-	} catch (error) {
+        next();
 
-		console.log("Error in verifyToken ", error);
-		
-        return res.status(500).json({ success: false, message: "Server error" });
-	
+    } catch (err) {
+        // 4. return error
+        console.log(err);
+        return res.status(401).send("Error happen Unauthorized");
     }
 };
+
+export default jwtAuth;

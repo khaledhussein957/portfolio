@@ -1,14 +1,15 @@
 import bcryptjs from "bcryptjs";
 
 import { User } from "../model/userModel.js";
+import cloudinary from "../config/cloudinary/cloudinary.js";
 
 export const updateUser = async (req, res) => {
-    const userID = req.userId;
-    const { name, email, currentPassword, newPassword , avatar} = req.body;
+    const userID = req.user._id;
+    const { name, email, currentPassword, newPassword , image} = req.body;
 
     try {
 
-        const user = await User.findById({userID});
+        const user = await User.findById(userID);
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
@@ -20,23 +21,23 @@ export const updateUser = async (req, res) => {
         
         const hashedPassword = await bcryptjs.hash(newPassword, 10);
 
-        if (avatar) {
-			if (user.avatar) {
-				await cloudinary.uploader.destroy(user.avatar.split("/").pop().split(".")[0]);
+        if (image) {
+			if (user.image) {
+				await cloudinary.uploader.destroy(user.image.split("/").pop().split(".")[0]);
 			}
 
-			const uploadedResponse = await cloudinary.uploader.upload(avatar);
-			avatar = uploadedResponse.secure_url;
-		}
+			const uploadedResponse = await cloudinary.uploader.upload(image);
+			image = uploadedResponse.secure_url;
+		};
 
         user.name = name || user.name;
         user.email = email || user.email;
         user.password = hashedPassword || user.password;
-        user.avatar = avatar || user.avatar;
+        user.image = image || user.image;
 
         await user.save();
 
-        user.password = undefined;
+        user.password = null;
 
         res.status(200).json({ message: "User updated successfully", user });
 
@@ -50,7 +51,7 @@ export const updateUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
     
-    const userID = req.userId;
+    const userID = req.user._id;
     try {
         const user = await User.findByIdAndDelete(userID);
         if (!user) {

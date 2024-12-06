@@ -8,11 +8,11 @@ export const sendVerificationEmail = async (email, verificationToken) => {
 			from: sender,
 			to: recipient,
 			subject: "Verify your email",
-            text: `Hello...\B
-					Thank you for your signup! Your Verification code is: \B
-					${verificationToken} \B
-					Enter this code to the verification page to complete your Registration\B
-					This code will expire in 15 minutes for security reason\B`,
+            text: `Hello...\n
+					Thank you for your signup! Your Verification code is: \n
+					${verificationToken} \n
+					Enter this code to the verification page to complete your Registration\n
+					This code will expire in 15 minutes for security reason\n`,
 			category: "Email Verification",
 		});
 
