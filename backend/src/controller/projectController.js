@@ -10,7 +10,7 @@ export const getProjects = async (req, res) => {
 };
 
 export const createProject = async (req, res) => {
-  const { title, description, technologies, githubLink, liveLink, status } =
+  const { title, description, technologies, githubLink, status } =
     req.body;
 
   try {
@@ -19,7 +19,6 @@ export const createProject = async (req, res) => {
       description,
       technologies,
       githubLink,
-      liveLink,
       status,
     });
 
