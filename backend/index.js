@@ -1,7 +1,7 @@
-
 import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 import connectDB from "./src/config/database/mongoDB.js";
 
@@ -15,14 +15,20 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-app.use(express.json()); 
+app.use(
+	cors({
+		origin: true,
+		credentials: true,
+	})
+);
+
+app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/project", projectRoutes);
 app.use("/api/skill", skillRoutes);
-
 
 app.listen(PORT, () => {
 	connectDB();
