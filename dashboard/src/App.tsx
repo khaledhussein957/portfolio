@@ -4,6 +4,7 @@ import SignUpPage from "./pages/SignUpPage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
 import EmailVerificationPage from "./pages/EmailVerificationPage.tsx";
 import DashboardPage from "./pages/DashboardPage.tsx";
+import UpdateProfile from "./pages/UpdateProfile.tsx";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage.tsx";
 import ResetPasswordPage from "./pages/ResetPasswordPage.tsx";
 
@@ -57,6 +58,14 @@ function App() {
 					element={
 						<ProtectedRoute>
 							<DashboardPage />
+						</ProtectedRoute>
+					}
+				/>
+				<Route 
+					path="/update-profile"
+					element={
+						<ProtectedRoute>
+							<UpdateProfile />
 						</ProtectedRoute>
 					}
 				/>

@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label"
 import { useState } from "react";
 import { useAuthStore } from "@/stores/AuthStore";
 import { useNavigate } from "react-router-dom";
-// import { github } from "lucide-react"
+import { motion } from "framer-motion";
 
 
 function SignUpPage() {
@@ -25,15 +25,23 @@ function SignUpPage() {
 
 	const { signup, isLoading, error } = useAuthStore();
 
+  // create image variable then assign the fist char of the name
+  const image = name.charAt(0);
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		await signup(email, password);
+		await signup(name, email, password, image);
     navigate("/login");
 	};
 
   return (
     // add some width to the Card when is desktop and pc
-    <Card className="w-full max-w-sm mx-auto">
+    <motion.div
+    initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card className="w-full max-w-sm mx-auto">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl">Create an account</CardTitle>
         <CardDescription>
@@ -78,6 +86,7 @@ function SignUpPage() {
       </CardFooter>
       <p className="flex flex-col space-y-1.5 p-6 text-center">Already have an account? <a href="/login">Login</a></p>
     </Card>
+    </motion.div>
   )
 }
 

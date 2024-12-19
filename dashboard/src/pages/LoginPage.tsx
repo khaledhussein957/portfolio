@@ -12,8 +12,7 @@ import { Label } from "@/components/ui/label"
 import { useState } from "react";
 import { useAuthStore } from "@/stores/AuthStore";
 import { useNavigate } from "react-router-dom";
-// import { github } from "lucide-react"
-
+import { motion } from "framer-motion";
 
 function LoginPage() {
 
@@ -25,14 +24,20 @@ function LoginPage() {
 	const { login, isLoading, error } = useAuthStore();
 
 	const handleLogin = async (e) => {
-		e.preventDefault();
+    e.preventDefault();
+
 		await login(email, password);
     navigate("/");
 	};
 
   return (
     // add some width to the Card when is desktop and pc
-    <Card className="w-full max-w-sm mx-auto">
+    <motion.div
+    initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card className="w-full max-w-sm mx-auto">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl">Login</CardTitle>
         <CardDescription>
@@ -80,6 +85,7 @@ function LoginPage() {
         Forget Password? <a href="/forgot-password">Forget Password</a>
       </p>
     </Card>
+    </motion.div>
   )
 }
 
