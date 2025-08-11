@@ -1,14 +1,14 @@
 import mongoose from 'mongoose'
 
 const skillSchema = mongoose.Schema({
-    name: {
+    skill: {
         type: String,
         required: true
     },
     proficiency: {
-        type: Number,
-        min: 0,
-        max: 100
+        type: String,
+        required: true,
+        enum: ["Beginner", "Intermediate", "Advanced", "Expert"]
     },
 },{
     timestamps: true

@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 5001;
 
 app.use(
 	cors({
-		origin: "http://localhost:5173",
+		origin: ["http://localhost:5173", "http://localhost:5174"],
 		credentials: true,
 	})
 );
@@ -25,12 +25,13 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("/api/auth", authRoutes);
-app.use("/api/user", userRoutes);
-app.use("/api/project", projectRoutes);
-app.use("/api/skill", skillRoutes);
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/project", projectRoutes);
+app.use("/api/v1/skill", skillRoutes);
 
 app.listen(PORT, () => {
+
 	connectDB();
 	console.log(`Server running on port ${PORT}`);
 });

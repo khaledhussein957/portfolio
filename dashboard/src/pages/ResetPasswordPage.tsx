@@ -24,7 +24,7 @@ function ResetPasswordPage() {
   const { token } = useParams();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
@@ -32,45 +32,59 @@ function ResetPasswordPage() {
       return;
     }
 
-    resetPassword(token, password);
-    navigate("/login");
+    try {
+      await resetPassword(token!, password);
+      toast.success("Password reset successfully");
+      navigate("/login");
+    } catch (err) {
+      toast.error("Failed to reset password");
+    }
   };
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <Card>
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl">Create New Password</CardTitle>
-          <CardDescription>Enter the new password below</CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="Password">Password</Label>
-            <Input
-              id="Password"
-              type="ypassword"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="Password">Confirm Password</Label>
-            <Input
-              id="confirmPassword"
-              type="confirmPassword"
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-          </div>
-        </CardContent>
-        <CardFooter>
-          <Button className="w-full" onClick={handleSubmit}>
-            {isLoading ? "Loading..." : "Create a new Password"}
-          </Button>
-        </CardFooter>
-      </Card>
-    </motion.div>
+    <div className="min-h-screen w-full bg-gradient-to-br from-gray-900 via-green-900 to-emerald-900 flex items-center justify-center relative overflow-hidden">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Card>
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl">Create New Password</CardTitle>
+            <CardDescription>Enter the new password below</CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Button
+              className="w-full"
+              onClick={handleSubmit}
+              disabled={isLoading}
+            >
+              {isLoading ? "Loading..." : "Create New Password"}
+            </Button>
+          </CardFooter>
+        </Card>
+      </motion.div>
+    </div>
   );
 }
 

@@ -7,7 +7,6 @@ const jwtAuth = (req, res, next) => {
 
     // 1. Read the token from the cookie
     const token = req.cookies.token;
-    console.log(`token: ${token}`);
 
     try {
 
@@ -22,10 +21,8 @@ const jwtAuth = (req, res, next) => {
         if (!decode) {
             return res.status(401).send("Error happen Unauthorized");
         }
-        console.log(`decode: ${decode}`);
 
         req.userId = decode.userId;
-        console.log(`req.userId: ${req.userId}`);
 
         next();
 

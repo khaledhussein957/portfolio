@@ -27,31 +27,27 @@ export const signup = async (req, res) => {
 		}
 
 		const hashedPassword = await bcryptjs.hash(password, 10);
-		const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
+		// const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
 
 		const user = new User({
 			email,
 			password: hashedPassword,
 			name,
-			verificationToken,
-			verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
+			// verificationToken,
+			// verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
 		});
 
 		await user.save();
 
-		console.log(`User ${user.name} created successfully`);
+		// await sendVerificationEmail(user.email, verificationToken);
 
-		await sendVerificationEmail(user.email, verificationToken);
-
-		console.log(`Verification email sent to ${user.email}`);
+		// console.log(`Verification email sent to ${user.email}`);
 
 		// generate token
-		console.log(`user._id: ${user._id}`);
 
 		const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET,{
 			expiresIn: "7d",
 		});
-		console.log(`token in signup: ${token}`);
 
 		res.cookie("token", token, {
 			httpOnly: true,
