@@ -9,8 +9,9 @@ axios.defaults.withCredentials = true;
 
 export type Skill = {
   _id: string;
-  skill: string;
-  proficiency: string;
+  icon: string;
+  groupName: string;
+  skill: string[];
   createdAt: string;
 };
 
@@ -20,8 +21,8 @@ type SkillStore = {
   error: string | null;
 
   getSkills: () => Promise<void>;
-  addSkill: (skill: string, proficiency: string) => Promise<void>;
-  updateSkill: (id: string, data: Partial<Skill>) => Promise<void>;
+  addSkill: (data: { skill: string[]; groupName: string; icon: File | null }) => Promise<void>;
+  updateSkill: (id: string, data: { skill: string[]; groupName: string; icon?: File | null }) => Promise<void>;
   deleteSkill: (id: string) => Promise<void>;
 };
 
@@ -43,10 +44,16 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
     }
   },
 
-  addSkill: async (skill: string, proficiency: string) => {
+  addSkill: async ({ skill, groupName, icon }) => {
     try {
       set({ isLoading: true, error: null });
-      const res = await axios.post(`${API_URL}/skill`, { skill, proficiency });
+      const formData = new FormData();
+      skill.forEach((s) => formData.append("skill", s));
+      formData.append("groupName", groupName);
+      if (icon) formData.append("icon", icon);
+      const res = await axios.post(`${API_URL}/skill`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       set({ skills: [res.data, ...get().skills], isLoading: false });
     } catch (err: any) {
       set({
@@ -56,10 +63,16 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
     }
   },
 
-  updateSkill: async (id, data) => {
+  updateSkill: async (id, { skill, groupName, icon }) => {
     try {
       set({ isLoading: true, error: null });
-      const res = await axios.put(`${API_URL}/skill/${id}`, data);
+      const formData = new FormData();
+      skill.forEach((s) => formData.append("skill", s));
+      formData.append("groupName", groupName);
+      if (icon) formData.append("icon", icon);
+      const res = await axios.put(`${API_URL}/skill/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       const updatedSkills = get().skills.map((s) => (s._id === id ? res.data : s));
       set({ skills: updatedSkills, isLoading: false });
     } catch (err: any) {

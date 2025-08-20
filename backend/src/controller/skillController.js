@@ -1,21 +1,38 @@
 import { Skill } from "../model/skillModel.js";
+import cloudinary from "../config/cloudinary/cloudinary.js";
 
-export const addSkill = async (req,res) =>{
+export const addSkill = async (req, res) => {
     try {
-        const { skill, proficiency } = req.body;
+        const { groupName, skill } = req.body;
+        if (!groupName || !skill) {
+            return res.status(400).json({ error: "Please provide groupName and skill" });
+        }
 
-        if(!skill || !proficiency){
-            return res.status(400).json({error:"Please provide skill and proficiency"});
-        };
-        
+        // skill can be string or array depending on how it's sent
+        if (!Array.isArray(skill)) {
+            skill = [skill];
+        }
+
+        let iconUrl = "";
+        if (req.file) {
+            // Upload to Cloudinary
+            const result = await cloudinary.uploader.upload(req.file.path, {
+                folder: "skills/icons"
+            });
+            iconUrl = result.secure_url;
+        } else {
+            return res.status(400).json({ error: "Please upload an icon image" });
+        }
+
         const newSkill = new Skill({
+            icon: iconUrl,
+            groupName,
             skill,
-            proficiency,
         });
         const savedSkill = await newSkill.save();
         res.status(201).json(savedSkill);
     } catch (error) {
-        res.status(500).json({error:error.message});
+        res.status(500).json({ error: error.message });
     }
 };
 
@@ -48,16 +65,37 @@ export const deleteSkill = async (req,res) =>{
     }
 };    
 
-export const updateSkill = async (req,res) =>{
+export const updateSkill = async (req, res) => {
     try {
         const { id } = req.params;
-        const { skill, proficiency } = req.body;
-        const updatedSkill = await Skill.findByIdAndUpdate(id,{ skill, proficiency },{new:true});
-        if(!updatedSkill){
-            return res.status(404).json({error:"Skill not found"});
+        const { groupName } = req.body;
+        let { skill } = req.body;
+        if (!groupName || !skill) {
+            return res.status(400).json({ error: "Please provide groupName and skill" });
+        }
+        if (!Array.isArray(skill)) {
+            skill = [skill];
+        }
+        let updateData = { groupName, skill };
+
+        if (req.file) {
+            // Upload new icon to Cloudinary
+            const result = await cloudinary.uploader.upload(req.file.path, {
+                folder: "skills/icons"
+            });
+            updateData.icon = result.secure_url;
+        }
+
+        const updatedSkill = await Skill.findByIdAndUpdate(
+            id,
+            updateData,
+            { new: true }
+        );
+        if (!updatedSkill) {
+            return res.status(404).json({ error: "Skill not found" });
         }
         res.status(200).json(updatedSkill);
     } catch (error) {
-        res.status(500).json({error:error.message});
+        res.status(500).json({ error: error.message });
     }
 };

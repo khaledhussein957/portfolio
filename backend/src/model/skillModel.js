@@ -1,17 +1,25 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose";
 
-const skillSchema = mongoose.Schema({
-    skill: {
-        type: String,
-        required: true
+const skillSchema = mongoose.Schema(
+  {
+    icon: {
+      type: String,
+      required: true,
     },
-    proficiency: {
+    groupName: {
+      type: String,
+      required: true,
+    },
+    skill: [
+      {
         type: String,
         required: true,
-        enum: ["Beginner", "Intermediate", "Advanced", "Expert"]
-    },
-},{
-    timestamps: true
-});
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
 
 export const Skill = mongoose.model("Skill", skillSchema);

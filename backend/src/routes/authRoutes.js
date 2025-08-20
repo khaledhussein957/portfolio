@@ -10,13 +10,15 @@ import {
 } from "../controller/authController.js";
 
 import jwtAuth from "../middleware/auth.js";
+import { validateRegisterUser, validateLogin } from "../middleware/user.middleware.js";
+
 
 const router = express.Router();
 
 router.get("/check-auth", jwtAuth, checkAuth);
 
-router.post("/signup", signup);
-router.post("/login", login);
+router.post("/signup", validateRegisterUser, signup);
+router.post("/login", validateLogin, login);
 router.post("/logout", logout);
 
 router.post("/verify-email", verifyEmail);
