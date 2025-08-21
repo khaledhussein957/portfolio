@@ -1,13 +1,9 @@
 import { useEffect, useState } from "react";
-import { useAuthStore } from "../../stores/AuthStore";
-import { useProjectStore } from "../../stores/ProjectStore";
-import { useSkillStore } from "../../stores/SkillStore";
+import { useAuthStore, useProjectStore, useSkillStore, useUserStore } from "../../stores/AuthStore";
 import StatCard from "@/components/StatCard";
 import { Briefcase, Star } from "lucide-react";
 import Header from "@/components/Header";
 import { useOutletContext } from "react-router-dom";
-import { useUserStore } from "@/stores/UserStore";
-
 // Helper function to calculate trend
 const calculateTrend = (items: { createdAt: string }[]) => {
   const now = new Date();

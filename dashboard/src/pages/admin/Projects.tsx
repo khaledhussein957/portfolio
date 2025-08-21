@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useProjectStore, Project } from "../../stores/ProjectStore";
+import { useProjectStore, Project } from "../../stores/AuthStore";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

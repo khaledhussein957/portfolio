@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSkillStore, Skill } from "../../stores/SkillStore";
+import { useSkillStore, Skill } from "../../stores/AuthStore";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import { useOutletContext } from "react-router-dom";
