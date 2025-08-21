@@ -18,7 +18,7 @@ const NODE_ENV = process.env.NODE_ENV;
 
 app.use(
 	cors({
-		origin: ["http://localhost:5173", "http://localhost:5174"],
+		origin: ["http://localhost:5173", "http://localhost:5174", "https://portfolio-v48r.vercel.app"],
 		credentials: true,
 	})
 );
