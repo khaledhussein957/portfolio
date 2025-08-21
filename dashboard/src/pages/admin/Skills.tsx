@@ -62,7 +62,7 @@ const Skills = () => {
   const addSkillSchema = z.object({
     skill: z.array(z.string().min(1, "Skill name is required")).min(1, "At least one skill is required"),
     groupName: z.string().min(1, "Group name is required"),
-    icon: z.instanceof(File).or(z.undefined()).refine(
+    icon: z.instanceof(File).or(z.null()).refine(
       (file) => file instanceof File && file.size > 0,
       "Icon is required"
     )
@@ -71,7 +71,7 @@ const Skills = () => {
   const editSkillSchema = z.object({
     skill: z.array(z.string().min(1, "Skill name is required")).min(1, "At least one skill is required"),
     groupName: z.string().min(1, "Group name is required"),
-    icon: z.union([z.instanceof(File), z.undefined(), z.null()])
+    icon: z.instanceof(File).or(z.null())
   });
 
   type AddSkillForm = z.infer<typeof addSkillSchema>;
@@ -120,14 +120,14 @@ const Skills = () => {
   }, [skillToEdit, resetEdit]);
 
   const handleAddSkill = async (data: AddSkillForm) => {
-    await addSkill(data);
+    await addSkill({ ...data, icon: data.icon ?? null });
     setIsAddDialogOpen(false);
     resetAdd();
   };
 
   const handleUpdateSkill = async (data: EditSkillForm) => {
     if (!skillToEdit) return;
-    await updateSkill(skillToEdit._id, data);
+    await updateSkill(skillToEdit._id, { ...data, icon: data.icon ?? null });
     setIsEditDialogOpen(false);
     setSkillToEdit(null);
     resetEdit();
