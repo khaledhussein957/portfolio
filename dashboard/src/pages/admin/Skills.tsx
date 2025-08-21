@@ -200,7 +200,7 @@ const Skills = () => {
                       <img src={addIconPreview} alt="Preview" className="h-12 w-12 object-contain border" />
                       <Button type="button" variant="outline" size="sm" onClick={() => {
                         setAddIconPreview(null);
-                        setValueAdd("icon", undefined);
+                        setValueAdd("icon", null);
                       }}>Cancel Icon</Button>
                     </div>
                   )}
@@ -372,7 +372,7 @@ const Skills = () => {
                     <img src={editIconPreview} alt="Preview" className="h-12 w-12 object-contain border" />
                     <Button type="button" variant="outline" size="sm" onClick={() => {
                       setEditIconPreview(null);
-                      setValueEdit("icon", undefined);
+                      setValueEdit("icon", null);
                     }}>Cancel Icon</Button>
                   </div>
                 )}
