@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useAuthStore, useProjectStore, useSkillStore, useUserStore } from "../../stores/AuthStore";
+import { useAuthStore, useProjectStore, useSkillStore } from "../../stores/AuthStore";
+import { useUserStore } from "../../stores/UserStore";
 import StatCard from "@/components/StatCard";
 import { Briefcase, Star } from "lucide-react";
 import Header from "@/components/Header";
@@ -72,8 +73,12 @@ const Dashboard = () => {
     getUser();
   }, [getProjects, getSkills, getUser]);
 
-  const projectTrend = calculateTrend(projects);
-  const skillTrend = calculateTrend(skills);
+  const projectTrend = calculateTrend(
+    projects.filter((p) => typeof p.createdAt === "string") as { createdAt: string }[]
+  );
+  const skillTrend = calculateTrend(
+    skills.filter((s) => typeof s.createdAt === "string") as { createdAt: string }[]
+  );
 
   return (
     <>

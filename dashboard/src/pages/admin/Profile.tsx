@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useUserStore, Education, Experience } from "../../stores/AuthStore";
+import { Education, Experience } from "../../stores/AuthStore";
+import { useUserStore } from "../../stores/UserStore"
 import { useAuthStore } from "../../stores/AuthStore";
 import { Trash, Edit, UserCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";

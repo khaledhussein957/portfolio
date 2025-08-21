@@ -62,7 +62,10 @@ const Skills = () => {
   const addSkillSchema = z.object({
     skill: z.array(z.string().min(1, "Skill name is required")).min(1, "At least one skill is required"),
     groupName: z.string().min(1, "Group name is required"),
-    icon: z.instanceof(File).refine((file) => file.size > 0, "Icon is required")
+    icon: z.instanceof(File).or(z.undefined()).refine(
+      (file) => file instanceof File && file.size > 0,
+      "Icon is required"
+    )
   });
 
   const editSkillSchema = z.object({
