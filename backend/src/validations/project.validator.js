@@ -18,7 +18,7 @@ export const createProjectValidator = Joi.object({
     "string.empty": "GitHub link is required",
     "string.uri": "GitHub link must be a valid URL",
   }),
-  liveLink: Joi.string().uri().optional().messages({
+  liveLink: Joi.string().uri().optional().allow("").messages({
     "string.uri": "Live link must be a valid URL",
   }),
   status: Joi.string()

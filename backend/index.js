@@ -31,7 +31,23 @@ app.use("/api/v1/project", projectRoutes);
 app.use("/api/v1/skill", skillRoutes);
 
 app.listen(PORT, () => {
-
-	connectDB();
 	console.log(`Server running on port ${PORT}`);
 });
+
+const startServer = async () => {
+  try {
+    await connectDB();
+    if (process.env.NODE_ENV !== "production") {
+      app.listen(PORT, () => {
+        console.log("Server started on port:", PORT);
+      });
+    }
+  } catch (error) {
+    console.error("Error starting server:", error);
+    process.exit(1); // Exit the process with a failure code
+  }
+};
+
+startServer();
+
+export default app;

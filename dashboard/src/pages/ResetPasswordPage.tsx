@@ -10,30 +10,40 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuthStore } from "@/stores/AuthStore";
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { motion } from "framer-motion";
 
+const resetPasswordSchema = z.object({
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string().min(8, "Password must be at least 8 characters"),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
+
+type ResetPasswordForm = z.infer<typeof resetPasswordSchema>;
+
 function ResetPasswordPage() {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-
   const { resetPassword, isLoading } = useAuthStore();
-
   const { token } = useParams();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ResetPasswordForm>({
+    resolver: zodResolver(resetPasswordSchema),
+    mode: "onChange",
+  });
 
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
-
+  const onSubmit = async (data: ResetPasswordForm) => {
     try {
-      await resetPassword(token!, password);
+      await resetPassword(token!, data.password);
       toast.success("Password reset successfully");
       navigate("/login");
     } catch (err) {
@@ -48,40 +58,46 @@ function ResetPasswordPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Card>
+  <Card className="shadow-lg dark:shadow-[0_2px_16px_0_rgba(255,255,255,0.15)] bg-white dark:bg-black text-black dark:text-white">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl">Create New Password</CardTitle>
             <CardDescription>Enter the new password below</CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button
-              className="w-full"
-              onClick={handleSubmit}
-              disabled={isLoading}
-            >
-              {isLoading ? "Loading..." : "Create New Password"}
-            </Button>
-          </CardFooter>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <CardContent className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  {...register("password")}
+                />
+                {errors.password && (
+                  <span className="text-red-500 dark:text-red-400 text-xs">{errors.password.message}</span>
+                )}
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  {...register("confirmPassword")}
+                />
+                {errors.confirmPassword && (
+                  <span className="text-red-500 dark:text-red-400 text-xs">{errors.confirmPassword.message}</span>
+                )}
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button
+                className="w-full"
+                type="submit"
+                disabled={isLoading}
+              >
+                {isLoading ? "Loading..." : "Create New Password"}
+              </Button>
+            </CardFooter>
+          </form>
         </Card>
       </motion.div>
     </div>

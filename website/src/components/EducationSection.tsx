@@ -21,7 +21,7 @@ const EducationSection = () => {
           {user?.education?.map((edu, index) => (
             <div
               key={index}
-              className="group cursor-pointer rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all"
+              className="group cursor-pointer rounded-xl px-4 py-3 shadow-sm hover:shadow-md dark:shadow-[0_2px_8px_0_rgba(0,0,0,0.7)] transition-all"
             >
               <div className="flex items-center justify-between gap-x-2">
                 <h3 className="inline-flex items-center font-semibold text-sm sm:text-base">

@@ -7,7 +7,7 @@ const ExperienceSection = () => {
 
   useEffect(() => {
     getUser();
-  }, []);
+  }, [getUser]);
 
   return (
     <section
@@ -19,11 +19,11 @@ const ExperienceSection = () => {
           Experience
         </h2>
 
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-6 max-w-xl mx-auto">
           {user?.experience?.map((exp, index) => (
             <div
               key={index}
-              className="group p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 hover:shadow-md transition-all text-left"
+              className="group p-4 rounded-xl border border-gray-200 dark:border-gray-800 hover:shadow-md transition-all text-left"
             >
               <div className="flex items-center justify-between mb-1">
                 <h3 className="inline-flex items-center gap-x-1 font-semibold text-sm sm:text-base">

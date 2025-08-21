@@ -74,7 +74,7 @@ const Dashboard = () => {
     };
     fetchData();
     getUser();
-  }, [getProjects, getSkills]);
+  }, [getProjects, getSkills, getUser]);
 
   const projectTrend = calculateTrend(projects);
   const skillTrend = calculateTrend(skills);

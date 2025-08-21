@@ -1,10 +1,8 @@
 import { create } from "zustand";
 import axios from "axios";
 
-const API_URL =
-  import.meta.env.MODE === "development"
-    ? "http://localhost:5001/api/v1"
-    : "/api/v1";
+const API_URL = "https://portfolio-seven-rho-rfb06n69c8.vercel.app/api/v1";
+
 axios.defaults.withCredentials = true;
 
 export type Project = {
@@ -25,8 +23,8 @@ type ProjectStore = {
   error: string | null;
 
   getProjects: () => Promise<void>;
-  createProject: (title: string, description: string, technologies: string[], githubLink: string, status: string, image: File | null) => Promise<void>;
-  updateProject: (id: string, title: string, description: string, technologies: string[], githubLink: string, status: string, image: File | null) => Promise<void>;
+  createProject: (formData: FormData) => Promise<void>;
+  updateProject: (id: string, formData: FormData) => Promise<void>;
   deleteProject: (id: string) => Promise<void>;
 };
 
@@ -48,10 +46,12 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
     }
   },
 
-  createProject: async (title: string, description: string, technologies: string[], githubLink: string, status: string, image: File | null) => {
+  createProject: async (formData: FormData) => {
     try {
       set({ isLoading: true, error: null });
-      const res = await axios.post(`${API_URL}/project`, {title, description, technologies, githubLink, status, image});
+      const res = await axios.post(`${API_URL}/project`, formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
       set({ projects: [res.data, ...get().projects], isLoading: false });
     } catch (err: any) {
       set({
@@ -61,10 +61,12 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
     }
   },
 
-  updateProject: async (id: string, title: string, description: string, technologies: string[], githubLink: string, status: string, image: File | null) => {
+  updateProject: async (id: string, formData: FormData) => {
     try {
       set({ isLoading: true, error: null });
-      const res = await axios.put(`${API_URL}/project/${id}`, {title, description, technologies, githubLink, status, image});
+      const res = await axios.put(`${API_URL}/project/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
       const updatedProjects = get().projects.map((p) => (p._id === id ? res.data : p));
       set({ projects: updatedProjects, isLoading: false });
     } catch (err: any) {

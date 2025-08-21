@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useProjectStore, Project } from "../../stores/ProjectStore";
 import { Button } from "@/components/ui/button";
 import {
@@ -57,16 +60,34 @@ const Projects = () => {
     onToggleSidebar: () => void;
   }>();
 
-  // State for the form fields
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [technologies, setTechnologies] = useState<string[]>([]);
-  const [status, setStatus] = useState("In Progress");
-  const [githubLink, setGithubLink] = useState("");
-  const [liveLink, setLiveLink] = useState("");
-  const [image, setImage] = useState<File | string | null>(null);
+  // Zod schema for project
+  const projectSchema = z.object({
+    title: z.string().min(1, "Title is required"),
+    description: z.string().min(1, "Description is required"),
+    technologies: z
+      .array(z.string().min(1))
+      .min(1, "At least one technology is required"),
+    status: z.string().min(1, "Status is required"),
+    githubLink: z.string().optional(),
+    liveLink: z.string().optional(),
+    image: z.union([z.instanceof(File), z.string(), z.null()]).optional(),
+  });
+
+  type ProjectForm = z.infer<typeof projectSchema>;
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<ProjectForm>({
+    resolver: zodResolver(projectSchema),
+    mode: "onChange",
+  });
 
   const [loading, setLoading] = useState(false);
+  const [updating, setUpdating] = useState(false);
 
   // State for dialog and editing
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -84,70 +105,99 @@ const Projects = () => {
 
   useEffect(() => {
     if (projectToEdit) {
-      setTitle(projectToEdit.title);
-      setDescription(projectToEdit.description);
-      setTechnologies(projectToEdit.technologies);
-      setStatus(projectToEdit.status);
-      setGithubLink(projectToEdit.githubLink || "");
-      setLiveLink(projectToEdit.liveLink || "");
-      setImage(projectToEdit.image || null);
+      reset({
+        title: projectToEdit.title,
+        description: projectToEdit.description,
+        technologies: projectToEdit.technologies,
+        status: projectToEdit.status,
+        githubLink: projectToEdit.githubLink || "",
+        liveLink: projectToEdit.liveLink || "",
+        image: projectToEdit.image || null,
+      });
     } else {
-      // Reset form when adding a new project
-      setTitle("");
-      setDescription("");
-      setTechnologies([]);
-      setStatus("In Progress");
-      setGithubLink("");
-      setLiveLink("");
-      setImage(null);
+      reset({
+        title: "",
+        description: "",
+        technologies: [],
+        status: "In Progress",
+        githubLink: "",
+        liveLink: "",
+        image: null,
+      });
     }
-  }, [projectToEdit]);
+  }, [projectToEdit, reset]);
 
-  const handleAddClick = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title || !description || !technologies.length || !status) {
-      toast.error("Both skill and proficiency are required.");
-      return;
-    }
-    await createProject(
-      title,
-      description,
-      technologies,
-      githubLink,
-      status,
-      image as File
+  const handleAddClick = async (data: ProjectForm) => {
+    setLoading(true);
+    const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+    data.technologies.forEach((tech) =>
+      formData.append("technologies[]", tech)
     );
-    setIsEditDialogOpen(true);
+    formData.append("githubLink", data.githubLink || "");
+    formData.append("liveLink", data.liveLink || "");
+    formData.append("status", data.status);
+    if (data.image) formData.append("image", data.image as File);
+    await createProject(formData);
+    await getProjects(); // fetch latest projects
+    setLoading(false);
+    // clear the form
+    reset({
+      title: "",
+      description: "",
+      technologies: [],
+      status: "In Progress",
+      githubLink: "",
+      liveLink: "",
+      image: null,
+    });
+    setIsEditDialogOpen(false);
   };
 
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleUpdate = async (data: ProjectForm) => {
     if (!projectToEdit) return;
-    await updateProject(
-      projectToEdit._id,
-      title,
-      description,
-      technologies,
-      githubLink,
-      status,
-      image as File
+    setUpdating(true);
+    const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+    data.technologies.forEach((tech) =>
+      formData.append("technologies[]", tech)
     );
+    formData.append("githubLink", data.githubLink || "");
+    formData.append("liveLink", data.liveLink || "");
+    formData.append("status", data.status);
+    if (data.image) formData.append("image", data.image as File);
+    await updateProject(projectToEdit._id, formData);
+    await getProjects(); // fetch latest projects
     toast.success("Project updated successfully!");
     setIsEditDialogOpen(false);
     setProjectToEdit(null);
+    setUpdating(false);
   };
 
   return (
     <div className="flex-1 overflow-auto relative z-10">
-      <Header title="Projects" onToggleSidebar={onToggleSidebar} />
+      <div className="sticky top-0 z-20">
+        <Header title="Profile" onToggleSidebar={onToggleSidebar} />
+      </div>
       <main className="max-w-7xl mx-auto py-6 px-4 lg:px-8 space-y-6">
         {/* create project */}
         <div className="flex items-center justify-between gap-4">
           <h2 className="text-2xl font-semibold">Manage Projects</h2>
-          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          {/* Create Project Dialog */}
+          <Dialog
+            open={isEditDialogOpen && projectToEdit === null}
+            onOpenChange={(open) => {
+              setIsEditDialogOpen(open);
+              if (open) setProjectToEdit(null);
+            }}
+          >
             <DialogTrigger asChild>
-              <Button className="bg-black">
+              <Button
+                className="bg-black"
+                onClick={() => setProjectToEdit(null)}
+              >
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Add Project
               </Button>
@@ -156,22 +206,27 @@ const Projects = () => {
               <DialogHeader>
                 <DialogTitle>Add New Project</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleAddClick} className="space-y-4">
+              <form
+                onSubmit={handleSubmit(handleAddClick)}
+                className="space-y-4"
+              >
                 <div>
                   <Label htmlFor="title">Title</Label>
-                  <Input
-                    id="title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                  />
+                  <Input id="title" {...register("title")} />
+                  {errors.title && (
+                    <span className="text-red-500 text-xs">
+                      {errors.title.message}
+                    </span>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                  />
+                  <Textarea id="description" {...register("description")} />
+                  {errors.description && (
+                    <span className="text-red-500 text-xs">
+                      {errors.description.message}
+                    </span>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="technologies">
@@ -179,46 +234,53 @@ const Projects = () => {
                   </Label>
                   <Input
                     id="technologies"
-                    value={technologies.join(", ")}
-                    onChange={(e) =>
-                      setTechnologies(
-                        e.target.value.split(",").map((t) => t.trim())
-                      )
-                    }
+                    onChange={(e) => {
+                      const arr = e.target.value
+                        .split(",")
+                        .map((t) => t.trim())
+                        .filter(Boolean);
+                      setValue("technologies", arr, { shouldValidate: true });
+                    }}
                   />
+                  {errors.technologies && (
+                    <span className="text-red-500 text-xs">
+                      {errors.technologies.message}
+                    </span>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="status">Status</Label>
-                  <Input
+                  <select
                     id="status"
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                  />
+                    {...register("status")}
+                    className="w-full border rounded px-2 py-1"
+                  >
+                    <option value="In Progress">In Progress</option>
+                    <option value="Complete">Complete</option>
+                  </select>
+                  {errors.status && (
+                    <span className="text-red-500 text-xs">
+                      {errors.status.message}
+                    </span>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="githubLink">GitHub Link</Label>
-                  <Input
-                    id="githubLink"
-                    value={githubLink}
-                    onChange={(e) => setGithubLink(e.target.value)}
-                  />
+                  <Input id="githubLink" {...register("githubLink")} />
                 </div>
                 <div>
                   <Label htmlFor="liveLink">Live Link</Label>
-                  <Input
-                    id="liveLink"
-                    value={liveLink}
-                    onChange={(e) => setLiveLink(e.target.value)}
-                  />
+                  <Input id="liveLink" {...register("liveLink")} />
                 </div>
                 <div>
                   <Label htmlFor="image">Project Image</Label>
                   <Input
                     id="image"
                     type="file"
-                    onChange={(e) =>
-                      setImage(e.target.files ? e.target.files[0] : null)
-                    }
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] || null;
+                      setValue("image", file, { shouldValidate: true });
+                    }}
                   />
                 </div>
                 <DialogFooter>
@@ -227,8 +289,8 @@ const Projects = () => {
                       Cancel
                     </Button>
                   </DialogClose>
-                  <Button type="submit">
-                    {loading ? "adding..." : "Add Project"}
+                  <Button type="submit" disabled={loading}>
+                    {loading ? "Adding..." : "Add Project"}
                   </Button>
                 </DialogFooter>
               </form>
@@ -411,29 +473,37 @@ const Projects = () => {
           </DialogContent>
         </Dialog>
 
-        {/* Edit Skill Dialog */}
-        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        {/* Edit Project Dialog */}
+        <Dialog
+          open={isEditDialogOpen && projectToEdit !== null}
+          onOpenChange={(open) => {
+            setIsEditDialogOpen(open);
+            if (!open) setProjectToEdit(null);
+          }}
+        >
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Edit Project</DialogTitle>
             </DialogHeader>
 
-            <form onSubmit={handleUpdate} className="space-y-4">
+            <form onSubmit={handleSubmit(handleUpdate)} className="space-y-4">
               <div>
                 <Label htmlFor="title">Title</Label>
-                <Input
-                  id="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                />
+                <Input id="title" {...register("title")} />
+                {errors.title && (
+                  <span className="text-red-500 text-xs">
+                    {errors.title.message}
+                  </span>
+                )}
               </div>
               <div>
                 <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
+                <Textarea id="description" {...register("description")} />
+                {errors.description && (
+                  <span className="text-red-500 text-xs">
+                    {errors.description.message}
+                  </span>
+                )}
               </div>
               <div>
                 <Label htmlFor="technologies">
@@ -441,56 +511,64 @@ const Projects = () => {
                 </Label>
                 <Input
                   id="technologies"
-                  value={technologies.join(", ")}
-                  onChange={(e) =>
-                    setTechnologies(
-                      e.target.value.split(",").map((t) => t.trim())
-                    )
-                  }
+                  onChange={(e) => {
+                    const arr = e.target.value
+                      .split(",")
+                      .map((t) => t.trim())
+                      .filter(Boolean);
+                    setValue("technologies", arr, { shouldValidate: true });
+                  }}
                 />
+                {errors.technologies && (
+                  <span className="text-red-500 text-xs">
+                    {errors.technologies.message}
+                  </span>
+                )}
               </div>
               <div>
                 <Label htmlFor="status">Status</Label>
-                <Input
+                <select
                   id="status"
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                />
+                  {...register("status")}
+                  className="w-full border rounded px-2 py-1"
+                >
+                  <option value="In Progress">In Progress</option>
+                  <option value="Complete">Complete</option>
+                </select>
+                {errors.status && (
+                  <span className="text-red-500 text-xs">
+                    {errors.status.message}
+                  </span>
+                )}
               </div>
               <div>
                 <Label htmlFor="githubLink">GitHub Link</Label>
-                <Input
-                  id="githubLink"
-                  value={githubLink}
-                  onChange={(e) => setGithubLink(e.target.value)}
-                />
+                <Input id="githubLink" {...register("githubLink")} />
               </div>
               <div>
                 <Label htmlFor="liveLink">Live Link</Label>
-                <Input
-                  id="liveLink"
-                  value={liveLink}
-                  onChange={(e) => setLiveLink(e.target.value)}
-                />
+                <Input id="liveLink" {...register("liveLink")} />
               </div>
               <div>
                 <Label htmlFor="image">Project Image</Label>
                 <Input
                   id="image"
                   type="file"
-                  onChange={(e) =>
-                    setImage(e.target.files ? e.target.files[0] : null)
-                  }
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    setValue("image", file, { shouldValidate: true });
+                  }}
                 />
               </div>
-
               <DialogFooter>
                 <DialogClose asChild>
                   <Button type="button" variant="secondary">
                     Cancel
                   </Button>
                 </DialogClose>
-                <Button type="submit">Update Project</Button>
+                <Button type="submit" disabled={updating}>
+                  {updating ? "Updating..." : "Update Project"}
+                </Button>
               </DialogFooter>
             </form>
           </DialogContent>

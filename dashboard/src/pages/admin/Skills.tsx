@@ -116,13 +116,13 @@ const Skills = () => {
     }
   }, [skillToEdit, resetEdit]);
 
-  const handleAddSkill = async (data: SkillForm) => {
+  const handleAddSkill = async (data: AddSkillForm) => {
     await addSkill(data);
     setIsAddDialogOpen(false);
     resetAdd();
   };
 
-  const handleUpdateSkill = async (data: SkillForm) => {
+  const handleUpdateSkill = async (data: EditSkillForm) => {
     if (!skillToEdit) return;
     await updateSkill(skillToEdit._id, data);
     setIsEditDialogOpen(false);
@@ -132,7 +132,9 @@ const Skills = () => {
 
   return (
     <div className="flex-1 overflow-auto relative z-10">
-      <Header title="Skills" onToggleSidebar={onToggleSidebar} />
+      <div className="sticky top-0 z-20">
+        <Header title="Profile" onToggleSidebar={onToggleSidebar} />
+      </div>
       <main className="max-w-7xl mx-auto py-6 px-4 lg:px-8 space-y-6">
 
         {/* create skill */}
@@ -234,7 +236,7 @@ const Skills = () => {
                 <TableRow key={skill._id}>
                   <TableCell>
                     {skill.icon && (
-                      <img src={skill.icon} alt={skill.skill} className="h-8 w-8 object-contain" />
+                      <img src={skill.icon} alt={skill.groupName} className="h-8 w-8 object-contain" />
                     )}
                   </TableCell>
                   <TableCell className="font-medium">

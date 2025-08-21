@@ -1,4 +1,5 @@
 import { lazy, Suspense } from "react";
+import { Loader2 } from "lucide-react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { usePortfolioStore } from "./store/backendStore";
 
@@ -13,8 +14,8 @@ function App() {
   return (
     <Suspense
       fallback={
-        <div>
-          Loading...
+        <div className="flex items-center justify-center min-h-screen">
+          <Loader2 className="animate-spin h-10 w-10 text-gray-400 dark:text-gray-200" />
         </div>
       }
     >

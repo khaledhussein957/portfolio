@@ -1,5 +1,5 @@
 import { useEffect, Suspense, lazy, ReactNode } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { useAuthStore } from "./stores/AuthStore";
 
@@ -23,7 +23,7 @@ type Props = {
 // protect routes that require authentication
 const ProtectedRoute = ({ children }: Props) => {
   const { isAuthenticated, isCheckingAuth } = useAuthStore();
-
+  // Only use serializable values in state
   if (isCheckingAuth) {
     return (
       <div className="min-h-screen w-full flex items-center justify-center text-white text-lg animate-pulse">
@@ -31,18 +31,16 @@ const ProtectedRoute = ({ children }: Props) => {
       </div>
     );
   }
-
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-
   return children;
 };
 
 // redirect authenticated users away from login/signup
 const RedirectAuthenticatedUser = ({ children }: Props) => {
   const { isAuthenticated, isCheckingAuth } = useAuthStore();
-
+  // Only use serializable values in state
   if (isCheckingAuth) {
     return (
       <div className="min-h-screen w-full flex items-center justify-center text-white text-lg animate-pulse">
@@ -50,11 +48,9 @@ const RedirectAuthenticatedUser = ({ children }: Props) => {
       </div>
     );
   }
-
   if (isAuthenticated) {
     return <Navigate to="/" replace />;
   }
-
   return children;
 };
 

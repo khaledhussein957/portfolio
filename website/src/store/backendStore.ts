@@ -47,9 +47,11 @@ type Project = {
 
 type Skill = {
   _id: string;
-  skill: string;
-  proficiency: string;
+  icon: string;
+  groupName: string;
+  skill: string[];
   createdAt: string;
+  updatedAt?: string;
 };
 
 type PortfolioStore = {

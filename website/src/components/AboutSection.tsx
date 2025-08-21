@@ -6,7 +6,7 @@ const AboutSection = () => {
 
   useEffect(() => {
     getUser();
-  }, []);
+  }, [getUser]);
 
   return (
     <section

@@ -55,10 +55,10 @@ const Sidebar = ({ isOpen, setOpen }: SidebarProps) => {
       >
         {/* Header */}
         <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-700">
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-xl font-bold text-black dark:text-white">
             Dashboard
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-500 dark:text-white">
             {user?.name}
           </p>
         </div>
@@ -75,7 +75,7 @@ const Sidebar = ({ isOpen, setOpen }: SidebarProps) => {
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all font-medium ${
                       isActive
-                        ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-300"
+                        ? "bg-gray-100 text-black dark:bg-gray-100 dark:text-white"
                         : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
                     }`
                   }

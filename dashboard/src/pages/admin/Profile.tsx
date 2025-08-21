@@ -32,7 +32,7 @@ import Header from "../../components/Header";
 
 const ProfileSettings = () => {
   const { user } = useAuthStore();
-  const { updateUser, deleteUser, changePassword } = useUserStore();
+  const { updateUser, deleteUser, changePassword, getUser } = useUserStore();
 
   const [name, setName] = useState("");
   const [title, setTitle] = useState("");
@@ -45,6 +45,7 @@ const ProfileSettings = () => {
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
 
   const { onToggleSidebar } = useOutletContext<{
     onToggleSidebar: () => void;
@@ -80,9 +81,12 @@ const ProfileSettings = () => {
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsUpdatingProfile(true);
     await updateUser(name, title, bio, education, experience, image as File);
+    await getUser(); // fetch latest user data
     setIsEditDialogOpen(false);
     setImage(null);
+    setIsUpdatingProfile(false);
   };
 
   const handlePasswordUpdate = async (e: React.FormEvent) => {
@@ -171,13 +175,15 @@ const ProfileSettings = () => {
   };
 
   return (
-    <div className="min-h-screen w-full overflow-y-auto bg-gray-50 dark:bg-gray-900 flex flex-col">
-      <Header title="Profile" onToggleSidebar={onToggleSidebar} />
-      <div className="relative max-w-7xl mx-auto py-6 px-4 lg:px-8">
+    <div className="flex-1 overflow-auto relative z-10">
+      <div className="sticky top-0 z-20">
+        <Header title="Profile" onToggleSidebar={onToggleSidebar} />
+      </div>
+      <main className="max-w-7xl mx-auto py-6 px-4 lg:px-8 space-y-6">
         {/* Edit Profile Dialog */}
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-blue-600 hover:bg-blue-700">
+            <Button className="bg-black hover:bg-gray-800 text-white">
               <Edit className="mr-2 h-4 w-4" />
               Edit Profile
             </Button>
@@ -381,7 +387,9 @@ const ProfileSettings = () => {
                     Cancel
                   </Button>
                 </DialogClose>
-                <Button type="submit">Save Changes</Button>
+                <Button type="submit" disabled={isUpdatingProfile}>
+                  {isUpdatingProfile ? "Saving..." : "Save Changes"}
+                </Button>
               </DialogFooter>
             </form>
           </DialogContent>
@@ -503,7 +511,7 @@ const ProfileSettings = () => {
             </AlertDialogContent>
           </AlertDialog>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

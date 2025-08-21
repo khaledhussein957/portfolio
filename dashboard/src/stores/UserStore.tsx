@@ -1,10 +1,8 @@
 import { create } from "zustand";
 import axios from "axios";
 
-const API_URL =
-  import.meta.env.MODE === "development"
-    ? "http://localhost:5001/api/v1"
-    : "/api/v1";
+const API_URL = "https://portfolio-seven-rho-rfb06n69c8.vercel.app/api/v1";
+
 
 axios.defaults.withCredentials = true;
 
