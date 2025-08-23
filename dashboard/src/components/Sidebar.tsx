@@ -7,6 +7,16 @@ import {
   BarChart2,
 } from "lucide-react";
 import { useAuthStore } from "../stores/AuthStore";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -89,17 +99,35 @@ const Sidebar = ({ isOpen, setOpen }: SidebarProps) => {
         </nav>
 
         {/* Logout */}
-        <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700">
-          <button
-            onClick={() => {
-              handleLinkClick();
-              handleLogout();
-            }}
-            className="flex items-center gap-3 w-full px-4 py-2.5 rounded-lg text-red-600 hover:text-white hover:bg-red-600 dark:hover:bg-red-700 transition focus:outline-none focus:ring-2 focus:ring-red-500"
-          >
-            <LogOut size={20} />
-            <span>Logout</span>
-          </button>
+        <div className="px-4 py-3 border-t">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button
+                className="flex items-center gap-3 w-full px-4 py-2.5 rounded-lg transition-all font-medium text-gray-700 hover:bg-red-600 hover:text-white dark:text-gray-300 dark:hover:bg-red-700 focus:bg-gray-100 focus:text-black dark:focus:bg-gray-100 dark:focus:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
+                <LogOut size={20} />
+                <span>Logout</span>
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+              </AlertDialogHeader>
+              <p>Are you sure you want to logout?</p>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => {
+                    handleLinkClick();
+                    handleLogout();
+                  }}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  Confirm Logout
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </aside>
     </>

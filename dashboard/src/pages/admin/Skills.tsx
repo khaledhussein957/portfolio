@@ -46,8 +46,15 @@ import { MoreVertical, Edit, Trash2, Plus } from "lucide-react";
 import toast from "react-hot-toast";
 
 const Skills = () => {
-  const { skills, getSkills, deleteSkill, addSkill, updateSkill, error, isLoading } =
-    useSkillStore();
+  const {
+    skills,
+    getSkills,
+    deleteSkill,
+    addSkill,
+    updateSkill,
+    error,
+    isLoading,
+  } = useSkillStore();
   const { onToggleSidebar } = useOutletContext<{
     onToggleSidebar: () => void;
   }>();
@@ -60,18 +67,25 @@ const Skills = () => {
 
   // Zod schema for skill
   const addSkillSchema = z.object({
-    skill: z.array(z.string().min(1, "Skill name is required")).min(1, "At least one skill is required"),
+    skill: z
+      .array(z.string().min(1, "Skill name is required"))
+      .min(1, "At least one skill is required"),
     groupName: z.string().min(1, "Group name is required"),
-    icon: z.instanceof(File).or(z.null()).refine(
-      (file) => file instanceof File && file.size > 0,
-      "Icon is required"
-    )
+    icon: z
+      .instanceof(File)
+      .or(z.null())
+      .refine(
+        (file) => file instanceof File && file.size > 0,
+        "Icon is required"
+      ),
   });
 
   const editSkillSchema = z.object({
-    skill: z.array(z.string().min(1, "Skill name is required")).min(1, "At least one skill is required"),
+    skill: z
+      .array(z.string().min(1, "Skill name is required"))
+      .min(1, "At least one skill is required"),
     groupName: z.string().min(1, "Group name is required"),
-    icon: z.instanceof(File).or(z.null())
+    icon: z.instanceof(File).or(z.null()),
   });
 
   type AddSkillForm = z.infer<typeof addSkillSchema>;
@@ -82,10 +96,10 @@ const Skills = () => {
     handleSubmit: handleSubmitAdd,
     reset: resetAdd,
     setValue: setValueAdd,
-    formState: { errors: errorsAdd }
+    formState: { errors: errorsAdd },
   } = useForm<AddSkillForm>({
     resolver: zodResolver(addSkillSchema),
-    mode: "onChange"
+    mode: "onChange",
   });
 
   const {
@@ -93,10 +107,10 @@ const Skills = () => {
     handleSubmit: handleSubmitEdit,
     reset: resetEdit,
     setValue: setValueEdit,
-    formState: { errors: errorsEdit }
+    formState: { errors: errorsEdit },
   } = useForm<EditSkillForm>({
     resolver: zodResolver(editSkillSchema),
-    mode: "onChange"
+    mode: "onChange",
   });
 
   useEffect(() => {
@@ -110,9 +124,11 @@ const Skills = () => {
   useEffect(() => {
     if (skillToEdit) {
       resetEdit({
-        skill: Array.isArray(skillToEdit.skill) ? skillToEdit.skill : [skillToEdit.skill],
+        skill: Array.isArray(skillToEdit.skill)
+          ? skillToEdit.skill
+          : [skillToEdit.skill],
         groupName: skillToEdit.groupName,
-        icon: undefined as unknown as File // icon not prefilled
+        icon: undefined as unknown as File, // icon not prefilled
       });
     } else {
       resetEdit();
@@ -139,44 +155,50 @@ const Skills = () => {
         <Header title="Profile" onToggleSidebar={onToggleSidebar} />
       </div>
       <main className="max-w-7xl mx-auto py-6 px-4 lg:px-8 space-y-6">
-
         {/* create skill */}
         <div className="flex items-center justify-between gap-4">
           <h2 className="text-2xl font-semibold">Manage Skills</h2>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-black">
+              <Button className="bg-black hover:bg-gray-800 text-white">
                 <Plus className="mr-2 h-4 w-4" />
                 New Skill
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="bg-white">
               <DialogHeader>
                 <DialogTitle>Create New Skill</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleSubmitAdd(handleAddSkill)} className="space-y-4">
+              <form
+                onSubmit={handleSubmitAdd(handleAddSkill)}
+                className="space-y-4"
+              >
                 <div>
                   <Label htmlFor="skills">Skills (comma separated)</Label>
                   <Input
                     id="skills"
-                    onChange={e => {
+                    onChange={(e) => {
                       const value = e.target.value;
-                      const arr = value.split(",").map(s => s.trim()).filter(Boolean);
+                      const arr = value
+                        .split(",")
+                        .map((s) => s.trim())
+                        .filter(Boolean);
                       setValueAdd("skill", arr, { shouldValidate: true });
                     }}
                   />
                   {errorsAdd.skill && (
-                    <span className="text-red-500 text-xs">{errorsAdd.skill.message}</span>
+                    <span className="text-red-500 text-xs">
+                      {errorsAdd.skill.message}
+                    </span>
                   )}
                 </div>
                 <div>
                   <Label htmlFor="groupName">Group Name</Label>
-                  <Input
-                    id="groupName"
-                    {...registerAdd("groupName")}
-                  />
+                  <Input id="groupName" {...registerAdd("groupName")} />
                   {errorsAdd.groupName && (
-                    <span className="text-red-500 text-xs">{errorsAdd.groupName.message}</span>
+                    <span className="text-red-500 text-xs">
+                      {errorsAdd.groupName.message}
+                    </span>
                   )}
                 </div>
                 <div>
@@ -187,7 +209,9 @@ const Skills = () => {
                     accept="image/*"
                     onChange={(e) => {
                       const file = e.target.files && e.target.files[0];
-                      setValueAdd("icon", file as File, { shouldValidate: true });
+                      setValueAdd("icon", file as File, {
+                        shouldValidate: true,
+                      });
                       if (file) {
                         setAddIconPreview(URL.createObjectURL(file));
                       } else {
@@ -197,15 +221,28 @@ const Skills = () => {
                   />
                   {addIconPreview && (
                     <div className="mt-2 flex items-center gap-2">
-                      <img src={addIconPreview} alt="Preview" className="h-12 w-12 object-contain border" />
-                      <Button type="button" variant="outline" size="sm" onClick={() => {
-                        setAddIconPreview(null);
-                        setValueAdd("icon", null);
-                      }}>Cancel Icon</Button>
+                      <img
+                        src={addIconPreview}
+                        alt="Preview"
+                        className="h-12 w-12 object-contain border"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setAddIconPreview(null);
+                          setValueAdd("icon", null, { shouldValidate: true });
+                        }}
+                      >
+                        Cancel Icon
+                      </Button>
                     </div>
                   )}
                   {errorsAdd.icon && (
-                    <span className="text-red-500 text-xs">{errorsAdd.icon.message}</span>
+                    <span className="text-red-500 text-xs">
+                      {errorsAdd.icon.message}
+                    </span>
                   )}
                 </div>
                 <DialogFooter>
@@ -214,7 +251,7 @@ const Skills = () => {
                       Cancel
                     </Button>
                   </DialogClose>
-                  <Button type="submit" disabled={isLoading}>
+                  <Button type="submit" disabled={isLoading} className="bg-black text-white hover:text-black">
                     {isLoading ? "Loading..." : "Create Skill"}
                   </Button>
                 </DialogFooter>
@@ -239,20 +276,29 @@ const Skills = () => {
                 <TableRow key={skill._id}>
                   <TableCell>
                     {skill.icon && (
-                      <img src={skill.icon} alt={skill.groupName} className="h-8 w-8 object-contain" />
+                      <img
+                        src={skill.icon}
+                        alt={skill.groupName}
+                        className="h-8 w-8 object-contain"
+                      />
                     )}
                   </TableCell>
                   <TableCell className="font-medium">
                     <div className="flex flex-wrap gap-2">
-                      {Array.isArray(skill.skill)
-                        ? skill.skill.map((s, idx) => (
-                            <span key={idx} className="inline-block bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs border">
-                              {s}
-                            </span>
-                          ))
-                        : (
-                            <span className="inline-block bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs border">{skill.skill}</span>
-                          )}
+                      {Array.isArray(skill.skill) ? (
+                        skill.skill.map((s, idx) => (
+                          <span
+                            key={idx}
+                            className="inline-block bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs border"
+                          >
+                            {s}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="inline-block bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs border">
+                          {skill.skill}
+                        </span>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>{skill.groupName}</TableCell>
@@ -289,14 +335,14 @@ const Skills = () => {
                               Delete
                             </DropdownMenuItem>
                           </AlertDialogTrigger>
-                          <AlertDialogContent>
+                          <AlertDialogContent className="bg-white">
                             <AlertDialogHeader>
                               <AlertDialogTitle>
                                 Confirm Deletion
                               </AlertDialogTitle>
                               <AlertDialogDescription>
-                                Are you sure you want to delete the skill \"
-                                {skill.skill}\"? This action cannot be undone.
+                                Are you sure you want to delete the skill "
+                                {skill.skill}"? This action cannot be undone.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
@@ -321,34 +367,47 @@ const Skills = () => {
 
         {/* Edit Skill Dialog */}
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-          <DialogContent>
+          <DialogContent className="bg-white">
             <DialogHeader>
               <DialogTitle>Edit Skill</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleSubmitEdit(handleUpdateSkill)} className="space-y-4">
+            <form
+              onSubmit={handleSubmitEdit(handleUpdateSkill)}
+              className="space-y-4"
+            >
               <div>
                 <Label htmlFor="editSkills">Skills (comma separated)</Label>
                 <Input
                   id="editSkills"
-                  defaultValue={skillToEdit?.skill ? (Array.isArray(skillToEdit.skill) ? skillToEdit.skill.join(", ") : skillToEdit.skill) : ""}
-                  onChange={e => {
+                  defaultValue={
+                    skillToEdit?.skill
+                      ? Array.isArray(skillToEdit.skill)
+                        ? skillToEdit.skill.join(", ")
+                        : skillToEdit.skill
+                      : ""
+                  }
+                  onChange={(e) => {
                     const value = e.target.value;
-                    const arr = value.split(",").map(s => s.trim()).filter(Boolean);
+                    const arr = value
+                      .split(",")
+                      .map((s) => s.trim())
+                      .filter(Boolean);
                     setValueEdit("skill", arr, { shouldValidate: true });
                   }}
                 />
                 {errorsEdit.skill && (
-                  <span className="text-red-500 text-xs">{errorsEdit.skill.message}</span>
+                  <span className="text-red-500 text-xs">
+                    {errorsEdit.skill.message}
+                  </span>
                 )}
               </div>
               <div>
                 <Label htmlFor="editGroupName">Group Name</Label>
-                <Input
-                  id="editGroupName"
-                  {...registerEdit("groupName")}
-                />
+                <Input id="editGroupName" {...registerEdit("groupName")} />
                 {errorsEdit.groupName && (
-                  <span className="text-red-500 text-xs">{errorsEdit.groupName.message}</span>
+                  <span className="text-red-500 text-xs">
+                    {errorsEdit.groupName.message}
+                  </span>
                 )}
               </div>
               <div>
@@ -359,7 +418,9 @@ const Skills = () => {
                   accept="image/*"
                   onChange={(e) => {
                     const file = e.target.files && e.target.files[0];
-                    setValueEdit("icon", file as File, { shouldValidate: true });
+                    setValueEdit("icon", file as File, {
+                      shouldValidate: true,
+                    });
                     if (file) {
                       setEditIconPreview(URL.createObjectURL(file));
                     } else {
@@ -369,18 +430,38 @@ const Skills = () => {
                 />
                 {editIconPreview && (
                   <div className="mt-2 flex items-center gap-2">
-                    <img src={editIconPreview} alt="Preview" className="h-12 w-12 object-contain border" />
-                    <Button type="button" variant="outline" size="sm" onClick={() => {
-                      setEditIconPreview(null);
-                      setValueEdit("icon", null);
-                    }}>Cancel Icon</Button>
+                    <img
+                      src={editIconPreview}
+                      alt="Preview"
+                      className="h-12 w-12 object-contain border"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setEditIconPreview(null);
+                      }}
+                    >
+                      Cancel Icon
+                    </Button>
                   </div>
                 )}
                 {!editIconPreview && skillToEdit?.icon && (
-                  <img src={skillToEdit.icon} alt={Array.isArray(skillToEdit.skill) ? skillToEdit.skill.join(", ") : skillToEdit.skill} className="h-8 w-8 object-contain mt-2" />
+                  <img
+                    src={skillToEdit.icon}
+                    alt={
+                      Array.isArray(skillToEdit.skill)
+                        ? skillToEdit.skill.join(", ")
+                        : skillToEdit.skill
+                    }
+                    className="h-8 w-8 object-contain mt-2"
+                  />
                 )}
                 {errorsEdit.icon && (
-                  <span className="text-red-500 text-xs">{errorsEdit.icon.message}</span>
+                  <span className="text-red-500 text-xs">
+                    {errorsEdit.icon.message}
+                  </span>
                 )}
               </div>
               <DialogFooter>

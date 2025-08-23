@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Education, Experience } from "../../stores/AuthStore";
-import { useUserStore } from "../../stores/UserStore"
+import { useUserStore } from "../../stores/UserStore";
 import { useAuthStore } from "../../stores/AuthStore";
-import { Trash, Edit, UserCircle } from "lucide-react";
+import { Trash, Edit, UserCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -189,7 +189,8 @@ const ProfileSettings = () => {
               Edit Profile
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-h-[90vh] overflow-y-auto flex flex-col">
+          r
+          <DialogContent className="max-h-[90vh] overflow-y-auto flex flex-col bg-white">
             <DialogHeader>
               <DialogTitle>Edit Profile</DialogTitle>
             </DialogHeader>
@@ -294,10 +295,10 @@ const ProfileSettings = () => {
                       variant="destructive"
                       type="button"
                       size="sm"
-                      className="absolute top-2 right-2"
+                      className="absolute top-0.5 right-0.5 bg-red-600 text-white rounded-full"
                       onClick={() => removeEducationField(index)}
                     >
-                      Remove
+                      <X />
                     </Button>
                   </div>
                 ))}
@@ -366,10 +367,10 @@ const ProfileSettings = () => {
                       variant="destructive"
                       type="button"
                       size="sm"
-                      className="absolute top-2 right-2"
+                      className="absolute top-0.5 right-0.5 bg-red-600 text-white rounded-full"
                       onClick={() => removeExperienceField(index)}
                     >
-                      Remove
+                      <X />
                     </Button>
                   </div>
                 ))}
@@ -388,7 +389,7 @@ const ProfileSettings = () => {
                     Cancel
                   </Button>
                 </DialogClose>
-                <Button type="submit" disabled={isUpdatingProfile}>
+                <Button type="submit" disabled={isUpdatingProfile} className="bg-black hover:bg-gray-800 text-white">
                   {isUpdatingProfile ? "Saving..." : "Save Changes"}
                 </Button>
               </DialogFooter>
@@ -453,6 +454,7 @@ const ProfileSettings = () => {
           </div>
         </div>
 
+        {/* Change Password */}
         <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 mt-8">
           <h3 className="text-xl font-semibold mb-4">Change Password</h3>
           <form onSubmit={handlePasswordUpdate} className="space-y-4">
@@ -474,12 +476,13 @@ const ProfileSettings = () => {
                 onChange={(e) => setNewPassword(e.target.value)}
               />
             </div>
-            <Button type="submit" disabled={isUpdatingPassword}>
+            <Button type="submit" disabled={isUpdatingPassword} className="bg-black hover:bg-gray-800 text-white">
               {isUpdatingPassword ? "Updating..." : "Update Password"}
             </Button>
           </form>
         </div>
 
+        {/* Delete Account */}
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 shadow-lg rounded-lg p-6 mt-8">
           <h3 className="text-xl font-semibold text-red-800 dark:text-red-200 mb-4">
             Danger Zone
@@ -490,12 +493,12 @@ const ProfileSettings = () => {
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive">
+              <Button variant="destructive" className="bg-red-600 hover:bg-red-700 text-white">
                 <Trash className="w-4 h-4 mr-2" />
                 Delete Account
               </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent className="bg-white">
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
@@ -505,7 +508,7 @@ const ProfileSettings = () => {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDeleteAccount}>
+                <AlertDialogAction onClick={handleDeleteAccount} className="bg-red-600 hover:bg-red-700 text-white">
                   Yes, delete it
                 </AlertDialogAction>
               </AlertDialogFooter>

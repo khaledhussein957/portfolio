@@ -47,6 +47,8 @@ import {
 import { Eye, MoreVertical, Pencil, PlusCircle, Trash2 } from "lucide-react";
 
 const Projects = () => {
+  const [addImagePreview, setAddImagePreview] = useState<string | null>(null);
+  const [editImagePreview, setEditImagePreview] = useState<string | null>(null);
   const {
     projects,
     getProjects,
@@ -195,14 +197,14 @@ const Projects = () => {
           >
             <DialogTrigger asChild>
               <Button
-                className="bg-black"
+                className="bg-black hover:bg-gray-800 text-white"
                 onClick={() => setProjectToEdit(null)}
               >
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Add Project
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="bg-white">
               <DialogHeader>
                 <DialogTitle>Add New Project</DialogTitle>
               </DialogHeader>
@@ -277,11 +279,36 @@ const Projects = () => {
                   <Input
                     id="image"
                     type="file"
+                    accept="image/*"
                     onChange={(e) => {
                       const file = e.target.files?.[0] || null;
                       setValue("image", file, { shouldValidate: true });
+                      if (file) {
+                        setAddImagePreview(URL.createObjectURL(file));
+                      } else {
+                        setAddImagePreview(null);
+                      }
                     }}
                   />
+                  {addImagePreview && (
+                    <div className="mt-2 flex items-center gap-2">
+                      <img
+                        src={addImagePreview}
+                        alt="Preview"
+                        className="h-12 w-12 object-contain border"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setAddImagePreview(null);
+                        }}
+                      >
+                        Cancel Image
+                      </Button>
+                    </div>
+                  )}
                 </div>
                 <DialogFooter>
                   <DialogClose asChild>
@@ -289,7 +316,7 @@ const Projects = () => {
                       Cancel
                     </Button>
                   </DialogClose>
-                  <Button type="submit" disabled={loading}>
+                  <Button type="submit" disabled={loading} className="bg-black text-white hover:text-black">
                     {loading ? "Adding..." : "Add Project"}
                   </Button>
                 </DialogFooter>
@@ -367,14 +394,14 @@ const Projects = () => {
                               Delete
                             </DropdownMenuItem>
                           </AlertDialogTrigger>
-                          <AlertDialogContent>
+                          <AlertDialogContent className="bg-white">
                             <AlertDialogHeader>
                               <AlertDialogTitle>
                                 Confirm Deletion
                               </AlertDialogTitle>
                               <AlertDialogDescription>
-                                Are you sure you want to delete the project \"
-                                {project.title}\"? This action cannot be undone.
+                                Are you sure you want to delete the project "
+                                {project.title}"? This action cannot be undone.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
@@ -399,7 +426,7 @@ const Projects = () => {
 
         {/* View Project */}
         <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-          <DialogContent>
+          <DialogContent className="bg-white">
             <DialogHeader>
               <DialogTitle>View Project</DialogTitle>
             </DialogHeader>
@@ -481,7 +508,7 @@ const Projects = () => {
             if (!open) setProjectToEdit(null);
           }}
         >
-          <DialogContent>
+          <DialogContent className="bg-white">
             <DialogHeader>
               <DialogTitle>Edit Project</DialogTitle>
             </DialogHeader>
@@ -554,11 +581,36 @@ const Projects = () => {
                 <Input
                   id="image"
                   type="file"
+                  accept="image/*"
                   onChange={(e) => {
                     const file = e.target.files?.[0] || null;
                     setValue("image", file, { shouldValidate: true });
+                    if (file) {
+                      setEditImagePreview(URL.createObjectURL(file));
+                    } else {
+                      setEditImagePreview(null);
+                    }
                   }}
                 />
+                {editImagePreview && (
+                  <div className="mt-2 flex items-center gap-2">
+                    <img
+                      src={editImagePreview}
+                      alt="Preview"
+                      className="h-12 w-12 object-contain border"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setEditImagePreview(null);
+                      }}
+                    >
+                      Cancel Image
+                    </Button>
+                  </div>
+                )}
               </div>
               <DialogFooter>
                 <DialogClose asChild>
