@@ -7,7 +7,7 @@ const EducationSection = () => {
 
   useEffect(() => {
     getUser();
-  }, []); 
+  }, [getUser]); 
 
   return (
     <section

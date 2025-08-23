@@ -1,4 +1,4 @@
-import { Mail, Calendar } from "lucide-react";
+import { Calendar } from "lucide-react";
 
 const ContactSection = () => {
   return (

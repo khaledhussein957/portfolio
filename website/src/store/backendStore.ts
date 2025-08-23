@@ -6,15 +6,15 @@ const API_URL = "https://portfolio-dun-chi-7ndk681w8m.vercel.app/api/v1";
 axios.defaults.withCredentials = true;
 
 type Education = {
-  name: string;
-  certificate: string;
+  institution: string;
+  degree: string;
   startYear: string;
   endYear: string;
 };
 
 type Experience = {
-  name: string;
-  certificate: string;
+  company: string;
+  position: string;
   startYear: string;
   endYear: string;
 };
