@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 
-const API_URL = "https://portfolio-dun-chi-7ndk681w8m.vercel.app/api/v1";
+const API_URL = "https://server-six-roan.vercel.app/api/v1";
 axios.defaults.withCredentials = true;
 
 
