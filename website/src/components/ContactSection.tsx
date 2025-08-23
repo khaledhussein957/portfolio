@@ -1,4 +1,5 @@
 import { Calendar } from "lucide-react";
+import CV from "@/CV/Khaled_Hussein_FullStack_CV.pdf";
 
 const ContactSection = () => {
   return (
@@ -14,9 +15,8 @@ const ContactSection = () => {
               experience.
             </p>
             <a
-                href="/src/CV/Khaled_Hussein_FullStack_CV.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
+              href={CV}
+              download
               className="inline-flex items-center justify-center rounded-lg bg-black text-white dark:bg-white dark:text-black hover:bg-opacity-90 dark:hover:bg-opacity-90 transition-colors px-5 py-2.5 font-medium text-sm w-full sm:w-auto mx-auto md:mx-0"
             >
               Download CV
