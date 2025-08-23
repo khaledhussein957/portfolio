@@ -18,7 +18,7 @@ const NODE_ENV = process.env.NODE_ENV;
 
 app.use(
 	cors({
-		origin: ["http://localhost:5173", "http://localhost:5174", "https://dashboard.khalodi.vercel.app", "https://khalodi.vercel.app"],
+		origin: ["http://localhost:5173", "http://localhost:5174", "https://khalodi957.vercel.app/", "https://khalodi.vercel.app"],
 		credentials: true,
 	})
 );
