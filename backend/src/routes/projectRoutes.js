@@ -5,12 +5,14 @@ import { validateCreateProject, validateUpdateProject } from '../middleware/proj
 
 import { createProject, deleteProject, getProjects, updateProject } from '../controller/projectController.js';
 
+import jwtAuth from "../middleware/auth.js";
+
 const router = express.Router();
 
 router.get('/', getProjects);
-router.post('/', upload.single('image'), validateCreateProject, createProject);
-router.delete('/:id', deleteProject);
-router.put('/:id', upload.single('image'), validateUpdateProject, updateProject);
+router.post('/', jwtAuth, upload.single('image'), validateCreateProject, createProject);
+router.delete('/:id', jwtAuth, deleteProject);
+router.put('/:id', jwtAuth, upload.single('image'), validateUpdateProject, updateProject);
 
 
 export default router;
