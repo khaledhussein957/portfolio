@@ -27,6 +27,8 @@ export const updateUserValidation = Joi.object({
             degree: Joi.string().required(),
             startYear: Joi.string().optional(),
             endYear: Joi.string().optional(),
+            gpa: Joi.string().optional(),
+            uri: Joi.string().uri().optional(),
         })
     ),
 
@@ -37,6 +39,7 @@ export const updateUserValidation = Joi.object({
             position: Joi.string().required(),
             startYear: Joi.string().optional(),
             endYear: Joi.string().optional(),
+            uri: Joi.string().uri().optional(),
         })
     )
 }).or('name', 'email');

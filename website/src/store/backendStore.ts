@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import axios from "axios";
 
-const API_URL = "https://server-six-roan.vercel.app/api/v1";
+const API_URL = "http://localhost:5002/api/v1";
+// "https://server-six-roan.vercel.app/api/v1";
 
 axios.defaults.withCredentials = true;
 
@@ -10,6 +11,8 @@ type Education = {
   degree: string;
   startYear: string;
   endYear: string;
+  gpa: string;
+  uri: string;
 };
 
 type Experience = {
@@ -17,6 +20,7 @@ type Experience = {
   position: string;
   startYear: string;
   endYear: string;
+  uri: string;
 };
 
 type User = {
@@ -30,7 +34,7 @@ type User = {
   image?: string;
 };
 
-type Project = {
+export type Project = {
   _id: string;
   title: string;
   image?: string;

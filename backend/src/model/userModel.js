@@ -15,6 +15,12 @@ const educationSchema = new mongoose.Schema({
   endYear: {
     type: String,
   },
+  gpa: {
+    type: String,
+  },
+  uri: {
+    type: String,
+  }
 });
 
 const experienceSchema = new mongoose.Schema({
@@ -32,6 +38,9 @@ const experienceSchema = new mongoose.Schema({
   endYear: {
     type: String,
   },
+  uri: {
+    type: String,
+  }
 });
 
 const userSchema = new mongoose.Schema(

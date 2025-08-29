@@ -9,6 +9,8 @@ export type Education = {
   degree: string;
   startYear: string;
   endYear: string;
+  gpa: string;
+  uri: string;
 };
 
 export type Experience = {
@@ -16,6 +18,7 @@ export type Experience = {
   position: string;
   startYear: string;
   endYear: string;
+  uri: string;
 };
 
 export type User = {

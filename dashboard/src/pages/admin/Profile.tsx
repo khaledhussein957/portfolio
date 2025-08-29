@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Education, Experience } from "../../stores/AuthStore";
+import { Education, Experience } from "../../stores/UserStore";
 import { useUserStore } from "../../stores/UserStore";
 import { useAuthStore } from "../../stores/AuthStore";
 import { Trash, Edit, UserCircle, X } from "lucide-react";
@@ -64,6 +64,8 @@ const ProfileSettings = () => {
         degree: edu.degree ?? "",
         startYear: edu.startYear,
         endYear: edu.endYear,
+        gpa: edu.gpa ?? "",
+        uri: edu.uri,
       }));
 
       const mappedExperience = (user.experience || []).map(
@@ -72,6 +74,7 @@ const ProfileSettings = () => {
           position: exp.position ?? "",
           startYear: exp.startYear,
           endYear: exp.endYear,
+          uri: exp.uri,
         })
       );
 
@@ -140,6 +143,8 @@ const ProfileSettings = () => {
         degree: "",
         startYear: new Date().getFullYear().toString(),
         endYear: new Date().getFullYear().toString(),
+        gpa: "",
+        uri: "",
       },
     ]);
   };
@@ -152,6 +157,7 @@ const ProfileSettings = () => {
         position: "",
         startYear: new Date().getFullYear().toString(),
         endYear: new Date().getFullYear().toString(),
+        uri: "",
       },
     ]);
   };
@@ -189,7 +195,6 @@ const ProfileSettings = () => {
               Edit Profile
             </Button>
           </DialogTrigger>
-          r
           <DialogContent className="max-h-[90vh] overflow-y-auto flex flex-col bg-white">
             <DialogHeader>
               <DialogTitle>Edit Profile</DialogTitle>
@@ -290,6 +295,22 @@ const ProfileSettings = () => {
                           )
                         }
                       />
+                      <Input
+                        placeholder="GPA"
+                        type="text"
+                        value={edu.gpa}
+                        onChange={(e) =>
+                          handleEducationChange(index, "gpa", e.target.value)
+                        }
+                      />
+                      <Input
+                        placeholder="Institution Website URL"
+                        type="text"
+                        value={edu.uri}
+                        onChange={(e) =>
+                          handleEducationChange(index, "uri", e.target.value)
+                        }
+                      />
                     </div>
                     <Button
                       variant="destructive"
@@ -362,6 +383,14 @@ const ProfileSettings = () => {
                           )
                         }
                       />
+                      <Input
+                        placeholder="Company Website URL"
+                        type="text"
+                        value={exp.uri}
+                        onChange={(e) =>
+                          handleExperienceChange(index, "uri", e.target.value)
+                        }
+                      />
                     </div>
                     <Button
                       variant="destructive"
@@ -389,7 +418,11 @@ const ProfileSettings = () => {
                     Cancel
                   </Button>
                 </DialogClose>
-                <Button type="submit" disabled={isUpdatingProfile} className="bg-black hover:bg-gray-800 text-white">
+                <Button
+                  type="submit"
+                  disabled={isUpdatingProfile}
+                  className="bg-black hover:bg-gray-800 text-white"
+                >
                   {isUpdatingProfile ? "Saving..." : "Save Changes"}
                 </Button>
               </DialogFooter>
@@ -430,6 +463,17 @@ const ProfileSettings = () => {
                   <p className="text-gray-600 dark:text-gray-300">
                     {edu.degree} ({edu.startYear} - {edu.endYear})
                   </p>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    GPA: {edu.gpa}
+                  </p>
+                  <a
+                    href={edu.uri}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 dark:text-blue-400 hover:underline"
+                  >
+                    View the institution website
+                  </a>
                 </div>
               ))
             ) : (
@@ -476,7 +520,11 @@ const ProfileSettings = () => {
                 onChange={(e) => setNewPassword(e.target.value)}
               />
             </div>
-            <Button type="submit" disabled={isUpdatingPassword} className="bg-black hover:bg-gray-800 text-white">
+            <Button
+              type="submit"
+              disabled={isUpdatingPassword}
+              className="bg-black hover:bg-gray-800 text-white"
+            >
               {isUpdatingPassword ? "Updating..." : "Update Password"}
             </Button>
           </form>
@@ -493,7 +541,10 @@ const ProfileSettings = () => {
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive" className="bg-red-600 hover:bg-red-700 text-white">
+              <Button
+                variant="destructive"
+                className="bg-red-600 hover:bg-red-700 text-white"
+              >
                 <Trash className="w-4 h-4 mr-2" />
                 Delete Account
               </Button>
@@ -508,7 +559,10 @@ const ProfileSettings = () => {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDeleteAccount} className="bg-red-600 hover:bg-red-700 text-white">
+                <AlertDialogAction
+                  onClick={handleDeleteAccount}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
                   Yes, delete it
                 </AlertDialogAction>
               </AlertDialogFooter>
