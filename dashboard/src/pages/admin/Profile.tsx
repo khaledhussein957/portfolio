@@ -466,14 +466,16 @@ const ProfileSettings = () => {
                   <p className="text-gray-600 dark:text-gray-300">
                     GPA: {edu.gpa}
                   </p>
-                  <a
-                    href={edu.uri}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 dark:text-blue-400 hover:underline"
-                  >
-                    View the institution website
-                  </a>
+                  {edu.uri && (
+                    <a
+                      href={edu.uri}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 dark:text-blue-400 hover:underline"
+                    >
+                      View the institution website
+                    </a>
+                  )}
                 </div>
               ))
             ) : (
@@ -490,6 +492,16 @@ const ProfileSettings = () => {
                   <p className="text-gray-600 dark:text-gray-300">
                     {exp.position} ({exp.startYear} - {exp.endYear})
                   </p>
+                  {exp.uri && (
+                    <a
+                      href={exp.uri}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 dark:text-blue-400 hover:underline"
+                    >
+                      View the company website
+                    </a>
+                  )}
                 </div>
               ))
             ) : (
