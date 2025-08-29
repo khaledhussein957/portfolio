@@ -1,4 +1,4 @@
-import { createProjectValidator } from "../validations/project.validator.js";
+import { createProjectValidator, updateProjectValidator } from "../validations/project.validator.js";
 
 export const validateCreateProject = (req, res, next) => {
     const { error } = createProjectValidator.validate(req.body);

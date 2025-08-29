@@ -25,10 +25,10 @@ export const updateUserValidation = Joi.object({
         Joi.object({
             institution: Joi.string().required(),
             degree: Joi.string().required(),
-            startYear: Joi.string().optional(),
-            endYear: Joi.string().optional(),
-            gpa: Joi.string().optional(),
-            uri: Joi.string().uri().optional(),
+            startYear: Joi.string().allow('').optional(),
+            endYear: Joi.string().allow('').optional(),
+            gpa: Joi.string().allow('').optional(),
+            uri: Joi.string().uri().allow('').optional(),
         })
     ),
 
@@ -37,9 +37,9 @@ export const updateUserValidation = Joi.object({
         Joi.object({
             company: Joi.string().required(),
             position: Joi.string().required(),
-            startYear: Joi.string().optional(),
-            endYear: Joi.string().optional(),
-            uri: Joi.string().uri().optional(),
+            startYear: Joi.string().allow('').optional(),
+            endYear: Joi.string().allow('').optional(),
+            uri: Joi.string().uri().allow('').optional(),
         })
     )
 }).or('name', 'email');
